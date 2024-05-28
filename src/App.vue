@@ -8,6 +8,9 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import store from "@/scripts/store";
+import axios from "axios";
+import {watch} from "vue";
+import {useRoute} from "vue-router/dist/vue-router";
 
 export default {
   name: 'App',
@@ -16,10 +19,16 @@ export default {
     Header
   },
   setup() {
-    const id = sessionStorage.getItem("id");
-    if (id) {
-      store.commit("setAccount", id);
-    }
+    const check = () => {
+      axios.get("/api/account/check").then(({data}) => {
+        console.log(data);
+        store.commit("setAccount", data || 0);
+      })
+    };
+    const route = useRoute();
+    watch(route, () => {
+      check();
+    })
   }
 }
 </script>
@@ -38,7 +47,6 @@ export default {
     font-size: 3.5rem;
   }
 }
-
 .b-example-divider {
   width: 100%;
   height: 3rem;
